@@ -7,11 +7,10 @@ const baseUrl = import.meta.env.BASE_URL;
   <h1>Advanced Workflows</h1>
 
   <p class="lead text-lg text-[var(--muted)] mb-8">
-    The gateway's real power shows up when you stop calling tools one at a time and
-    start composing them. An <strong>advanced workflow</strong> is an agent that strings
-    several gateway tools together into a repeatable, often scheduled, end-to-end task —
-    triage a queue, reconcile billing, summarise alerts — with no servers to run and no
-    code to deploy.
+    An <strong>advanced workflow</strong> is an agent that strings several gateway tools
+    together into a repeatable, often scheduled, end-to-end task such as triaging a queue,
+    reconciling billing, or summarising alerts. There are no servers to run and no code to
+    deploy.
   </p>
 
   <h2 id="what-makes-a-workflow">What makes a workflow</h2>
@@ -21,7 +20,7 @@ const baseUrl = import.meta.env.BASE_URL;
   <ul>
     <li><strong>A trigger</strong> — usually a Claude-managed scheduled routine running on a cron, occasionally an on-demand run.</li>
     <li><strong>Gateway tools</strong> — the workflow reads and writes through MCP connectors; the gateway holds the credentials and does the vendor I/O.</li>
-    <li><strong>A prompt</strong> — the agent's logic lives entirely in a well-written prompt. That prompt <em>is</em> the workflow.</li>
+    <li><strong>A prompt</strong> — the agent's logic lives in a well-written prompt. That prompt <em>is</em> the workflow.</li>
     <li><strong>A notification</strong> — the result is surfaced to a human, typically in Slack or back onto the source record.</li>
   </ul>
   <p>
@@ -37,9 +36,51 @@ const baseUrl = import.meta.env.BASE_URL;
   </p>
   <ul>
     <li>
+      <a href={`${baseUrl}advanced-workflows/delivery-adapters/`}>Delivery Adapters</a>
+      &mdash; how a workflow routine delivers its report (Slack, IT Glue), and the adapter
+      contract for adding new targets.
+    </li>
+    <li>
+      <a href={`${baseUrl}advanced-workflows/agent-routine-catalog/`}>Agent → Routine Catalog</a>
+      &mdash; every msp-claude-plugins subagent classified by routine-fitness; the backlog
+      future workflows are picked from.
+    </li>
+    <li>
       <a href={`${baseUrl}advanced-workflows/autotask-ticket-triage/`}>Autotask Ticket Triage Agent</a>
       &mdash; a scheduled agent that classifies new Autotask tickets by priority, advances
       them to <em>In Progress</em>, and posts a summary to Slack.
+    </li>
+    <li>
+      <a href={`${baseUrl}advanced-workflows/patch-drift-reporter/`}>Patch Drift Reporter</a>
+      &mdash; a weekly scheduled agent that sweeps the Datto RMM fleet for devices behind
+      on patching and posts a site-by-site report to Slack as a canvas.
+    </li>
+    <li>
+      <a href={`${baseUrl}advanced-workflows/device-health-auditor/`}>Device Health Auditor</a>
+      &mdash; a daily scheduled agent that checks Datto RMM devices for antivirus, check-in,
+      and reboot problems and posts a grouped report to Slack.
+    </li>
+    <li>
+      <a href={`${baseUrl}advanced-workflows/m365-license-auditor/`}>M365 License Auditor</a>
+      &mdash; a monthly scheduled agent that checks Microsoft 365 tenants via CIPP, flags
+      unassigned licenses, estimates the wasted spend, and posts a grouped report to Slack.
+    </li>
+    <li>
+      <a href={`${baseUrl}advanced-workflows/compliance-drift-reporter/`}>Compliance Drift Reporter</a>
+      &mdash; a weekly scheduled agent that surfaces the week's Liongard configuration-change
+      detections, groups them by system, and posts a drift digest to Slack as a canvas.
+    </li>
+    <li>
+      <a href={`${baseUrl}advanced-workflows/billing-reconciler/`}>Billing Reconciler</a>
+      &mdash; a weekly, strictly read-only scheduled agent that reviews QuickBooks Online
+      for overdue invoices and billing anomalies, and posts a reconciliation report to
+      Slack as a canvas.
+    </li>
+    <li>
+      <a href={`${baseUrl}advanced-workflows/qbr-prep/`}>QBR Prep</a>
+      &mdash; a weekly scheduled agent that assembles a Quarterly Business Review pack for
+      one designated client by composing data from four systems, writes it to IT Glue, and
+      posts a summary to Slack.
     </li>
   </ul>
   <p class="text-sm text-[var(--muted)]">
