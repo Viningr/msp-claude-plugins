@@ -1,0 +1,208 @@
+---
+import DocsLayout from '@/layouts/DocsLayout.astro';
+
+const baseUrl = import.meta.env.BASE_URL;
+
+// Prompts kept as consts so literal braces / angle brackets render verbatim
+// (.astro treats { } as expressions — a const string sidesteps all escaping).
+const buildPrompt = `Build me a scheduled Patch Drift Reporter agent. Do all of this end to end:
+
+1. Confirm the WYRE MCP Gateway works and Datto RMM is reachable: call
+   datto_list_sites and check it returns your managed sites. Record the site
+   count for reference only — do NOT bake site IDs into the routine.
+2. Confirm a Slack connector is connected. Note the destination channel name
+   and ID (e.g. #sw-dev). If Slack does not show in the /schedule connector
+   list, read its connector_uuid and url from an existing routine that already
+   uses Slack (RemoteTrigger list -> get -> mcp_connections).
+3. Create a Claude-managed scheduled routine named "Patch Drift Reporter":
+   - Schedule: weekly, cron "0 11 * * 1" (Monday 07:00 America/New_York =
+     11:00 UTC). Faster-than-hourly cadences are rejected.
+   - Attach TWO connectors, each with permitted_tools populated:
+       * WYRE MCP Gateway: datto_list_sites, datto_list_devices,
+         datto_get_device, datto_get_device_audit
+       * Slack: slack_create_canvas, slack_send_message
+     An empty permitted_tools list = the routine runs with no tools.
+   - Routine prompt: every run, sweep every Datto RMM site, read each device's
+     OS patch status, flag devices more than 30 days behind or in a
+     failed/error patch state, build a report grouped by site, publish it as a
+     Slack canvas, and post a one-line summary linking the canvas. Use the
+     exact routine prompt below.
+4. Trigger a manual run and verify: a canvas titled "Patch Drift - <date>" was
+   created, a one-line summary landed in the destination channel, and the
+   report content matches the live fleet (spot-check one site).`;
+
+const routinePrompt = `You are the Patch Drift Reporter. You run weekly. Keep it lean.
+
+Use ONLY: datto_list_sites, datto_list_devices, datto_get_device,
+datto_get_device_audit, slack_create_canvas, slack_send_message.
+
+1. datto_list_sites to get every managed site.
+2. For each site, datto_list_devices. For each device, read its OS patch
+   status from the device record (use datto_get_device / datto_get_device_audit
+   only if patch fields are absent from the list payload).
+3. A device is DRIFTED if its last successful patch / OS update is more than
+   30 days ago, or patch status is failed/error.
+4. Build a report grouped by site: site name, total devices, drifted count,
+   and the drifted device names with how far behind each is.
+5. slack_create_canvas titled "Patch Drift - <today's date>" with the full
+   grouped report. Then slack_send_message to #sw-dev: a one-line summary
+   ("Patch drift: N drifted devices across M sites - see canvas") linking it.
+6. If a site or device cannot be read, list it in a "could not check" section
+   of the report rather than skipping it silently.`;
+---
+<DocsLayout title="Patch Drift Reporter" description="Build a Claude-managed scheduled agent that sweeps the Datto RMM fleet every week, flags devices behind on patching, and posts a grouped report to Slack as a canvas — no servers, no code.">
+  <h1>Patch Drift Reporter</h1>
+
+  <p class="lead text-lg text-[var(--muted)] mb-8">
+    A worked example of an <a href={`${baseUrl}advanced-workflows/`}>advanced workflow</a>:
+    a Claude-managed scheduled agent that, once a week, sweeps every site in your
+    Datto RMM fleet, reads each device's OS patch status, flags everything that has
+    drifted past a 30-day threshold, and publishes a site-by-site report to Slack as
+    a canvas with a one-line summary. No servers, no code, no deployment — the agent
+    is a saved prompt plus a schedule plus two MCP connectors, running in Claude's
+    cloud.
+  </p>
+
+  <h2 id="what-it-builds">What it builds</h2>
+  <p>
+    The finished workflow runs unattended on a weekly cron. Each run it enumerates
+    managed sites, lists their devices, reasons about which are behind on patching,
+    groups the findings by site, and notifies your team — turning a scattered fleet
+    into a single prioritised patch-drift report with a Slack trail.
+  </p>
+
+  <hr class="my-8" />
+
+  <h2 id="prerequisites">Prerequisites</h2>
+  <p>Before building, your Claude account needs all of the following:</p>
+  <table>
+    <thead>
+      <tr><th>Requirement</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>WYRE MCP Gateway connector</strong></td>
+        <td>Connected in claude.ai (<code>https://mcp.wyre.ai/v1/mcp</code>). Provides the <code>datto_*</code> tools. See the <a href={`${baseUrl}getting-started/gateway/`}>Gateway overview</a>.</td>
+      </tr>
+      <tr>
+        <td><strong>Datto RMM enabled in the gateway</strong></td>
+        <td>The gateway's Datto RMM API user must be able to <strong>read</strong> sites, devices, and device audit data across the fleet.</td>
+      </tr>
+      <tr>
+        <td><strong>Slack connector</strong></td>
+        <td>The first-party Slack connector connected in claude.ai (<code>https://mcp.slack.com/mcp</code>). Provides <code>slack_create_canvas</code> and <code>slack_send_message</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Scheduled routines access</strong></td>
+        <td>Created via the <code>/schedule</code> capability; managed at <a href="https://claude.ai/code/routines" target="_blank" rel="noopener noreferrer">claude.ai/code/routines</a>.</td>
+      </tr>
+      <tr>
+        <td><strong>A destination Slack channel</strong></td>
+        <td>e.g. <code>#sw-dev</code>, plus its channel ID. The Slack connector must have access to it.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="my-8" />
+
+  <h2 id="gotchas">Known gotchas</h2>
+  <p>
+    These are the things that cost real time the first time through. Account for them
+    up front and the build genuinely takes minutes.
+  </p>
+  <ul>
+    <li>
+      <strong>One-hour minimum cadence.</strong> Claude-managed routines reject any cron
+      faster than hourly — <code>*/5 * * * *</code> fails outright. A weekly sweep is
+      well within bounds; just don't try to push it toward real time.
+    </li>
+    <li>
+      <strong><code>permitted_tools</code> must be populated per connector.</strong> A
+      routine with a connector attached but an empty <code>permitted_tools</code> list
+      runs with <em>no tools</em> and silently does nothing — no error, no output. List
+      the exact tool names the routine needs.
+    </li>
+    <li>
+      <strong>Don't make the routine call <code>list_*</code> discovery tools you don't
+      need.</strong> <code>datto_list_sites</code> and <code>datto_list_devices</code> are
+      the working set here and must run every sweep — that is fine. The rule is to never
+      bake in <em>extra</em> discovery calls just to look up static IDs; discover those
+      once at build time instead.
+    </li>
+    <li>
+      <strong>A routine reaches only its attached connectors.</strong> The routine
+      sandbox blocks arbitrary network egress, so notifications must go through the
+      Slack connector's tools, not an outbound webhook. Attach every connector the
+      workflow touches.
+    </li>
+    <li>
+      <strong>Portfolio sweeps are large — keep the per-device read minimal.</strong>
+      A full fleet can be hundreds of devices. Read patch status from the
+      <code>datto_list_devices</code> payload wherever possible and avoid calling
+      <code>datto_get_device_audit</code> per device unless the list payload genuinely
+      lacks patch data — a per-device audit call across the whole fleet risks the
+      60-second tool timeout and a stalled run.
+    </li>
+  </ul>
+
+  <hr class="my-8" />
+
+  <h2 id="build-prompt">The one-shot build prompt</h2>
+  <p>
+    With the connectors above in place, paste this to Claude. It confirms the gateway,
+    creates the routine, and verifies it end to end.
+  </p>
+  <pre class="not-prose"><code>{buildPrompt}</code></pre>
+
+  <hr class="my-8" />
+
+  <h2 id="routine-prompt">The resulting routine prompt</h2>
+  <p>
+    This is the lean prompt the build process installs into the scheduled routine itself.
+    Substitute your own destination channel.
+  </p>
+  <pre class="not-prose"><code>{routinePrompt}</code></pre>
+
+  <hr class="my-8" />
+
+  <h2 id="how-it-works">How it works</h2>
+  <h3>A weekly cadence, by design</h3>
+  <p>
+    Patch drift is a slow-moving signal — devices fall behind over days and weeks, not
+    minutes. The routine runs every Monday morning so the report is waiting before the
+    week's remediation work starts. A weekly cron is also kind to the API: one full
+    fleet sweep per week, not one per hour.
+  </p>
+  <h3>The 30-day threshold is the whole rule</h3>
+  <p>
+    A device is "drifted" if its last successful OS update is more than 30 days ago, or
+    its patch status is failed or error. That single threshold is the entire
+    classification logic — no per-OS exceptions, no severity tiers. It keeps the report
+    consistent week to week and the routine prompt short. Tune the number to your
+    patching SLA.
+  </p>
+  <h3>Delivery is a Slack canvas plus a summary</h3>
+  <p>
+    The full site-by-site report can be long, so the routine publishes it as a Slack
+    canvas — a durable document teammates can scroll and reference — and posts only a
+    one-line summary to the channel linking it. The channel stays readable; the detail
+    lives in the canvas. See <a href={`${baseUrl}advanced-workflows/delivery-adapters/`}>delivery adapters</a>
+    for other ways to surface a routine's output.
+  </p>
+
+  <hr class="my-8" />
+
+  <h2 id="extending">Extending it</h2>
+  <p>
+    The workflow is RMM-agnostic. To run the same patch-drift sweep against a NinjaOne
+    fleet, swap the <code>datto-rmm</code> tools for the gateway's <code>ninjaone</code>
+    tools — the org/device enumeration and the per-device patch read map directly, and
+    the report-building, threshold, and Slack-delivery body of the routine are
+    identical. The gateway exposes the tools; the workflow is just the prompt.
+  </p>
+  <p class="text-sm text-[var(--muted)]">
+    Questions or a workflow you'd like documented?
+    <a href="https://github.com/wyre-technology/msp-claude-plugins/issues" target="_blank" rel="noopener noreferrer">Open an issue</a>
+    in the <code>msp-claude-plugins</code> repository.
+  </p>
+</DocsLayout>
