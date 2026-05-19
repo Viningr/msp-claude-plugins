@@ -70,9 +70,9 @@ Sites to check (siteUid - name):
     A worked example of an <a href={`${baseUrl}advanced-workflows/`}>advanced workflow</a>:
     a Claude-managed scheduled agent that, once a day, lists the devices at a fixed set
     of Datto RMM sites, checks each device's health, flags everything with an antivirus
-    problem, a stale check-in, or a pending reboot, and notifies your team — quietly when
-    the fleet is clean, with a Slack canvas when it is not. No servers, no code, no
-    deployment — the agent is a saved prompt plus a schedule plus two MCP connectors,
+    problem, a stale check-in, or a pending reboot, and notifies your team: quietly when
+    the fleet is clean, with a Slack canvas when it is not. There are no servers and no
+    code to deploy: the agent is a saved prompt plus a schedule plus two MCP connectors,
     running in Claude's cloud.
   </p>
 
@@ -80,7 +80,7 @@ Sites to check (siteUid - name):
   <p>
     The finished workflow runs unattended on a daily cron. Each run it lists the
     devices at each of its configured sites, reasons about which ones are unhealthy,
-    groups the findings by site, and notifies your team — turning a scattered fleet
+    groups the findings by site, and notifies your team, turning a scattered fleet
     into a single device-health report with a Slack trail. When nothing is wrong it
     posts one quiet "all clear" line and stops.
   </p>
@@ -192,10 +192,10 @@ Sites to check (siteUid - name):
   </p>
   <h3>The green path stays quiet</h3>
   <p>
-    When no device anywhere has a concern, the routine posts a single line — "Device
-    health: all clear across 6 sites." — and nothing else. No canvas, no noise. A clean
-    fleet should not produce a report a teammate has to open and scan to learn nothing
-    is wrong. The detailed canvas appears only when there is something to act on.
+    When no device anywhere has a concern, the routine posts a single line ("Device
+    health: all clear across 6 sites.") and nothing else. A clean fleet should not
+    produce a report a teammate has to open and scan to learn nothing is wrong. The
+    detailed canvas appears only when there is something to act on.
   </p>
   <h3>Three concern signals</h3>
   <p>
@@ -232,8 +232,8 @@ Sites to check (siteUid - name):
   <h3>Delivery is a Slack canvas plus a summary</h3>
   <p>
     The full site-by-site report can be long, so when there are concerns the routine
-    publishes it as a Slack canvas — a durable document teammates can scroll and
-    reference — and posts only a one-line summary to the channel linking it. The channel
+    publishes it as a Slack canvas, a durable document teammates can scroll and
+    reference, and posts only a one-line summary to the channel linking it. The channel
     stays readable; the detail lives in the canvas. See <a href={`${baseUrl}advanced-workflows/delivery-adapters/`}>delivery adapters</a>
     for other ways to surface a routine's output.
   </p>

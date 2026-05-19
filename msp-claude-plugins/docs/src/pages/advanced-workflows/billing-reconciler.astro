@@ -65,16 +65,16 @@ This routine is strictly read-only: never call any qbo write or update tool. If 
     a Claude-managed scheduled agent that, once a week, reads WYRE's QuickBooks Online
     books, flags invoices that are past due or look anomalous, and publishes a
     reconciliation report to Slack as a canvas with a one-line summary. It is strictly
-    <strong>read-only</strong> — it never writes to QuickBooks. No servers, no code, no
-    deployment — the agent is a saved prompt plus a schedule plus two MCP connectors,
-    running in Claude's cloud.
+    <strong>read-only</strong> and never writes to QuickBooks. There are no servers and
+    no code to deploy: the agent is a saved prompt plus a schedule plus two MCP
+    connectors, running in Claude's cloud.
   </p>
 
   <h2 id="what-it-builds">What it builds</h2>
   <p>
     The finished workflow runs unattended on a weekly cron. Each run it pulls a bounded
     window of open invoices and the aged-receivables report, reasons about which
-    invoices are overdue and which look wrong, and notifies your team — turning a
+    invoices are overdue and which look wrong, and notifies your team, turning a
     spreadsheet review into a single billing-reconciliation report with a Slack trail.
     Anything that looks off but cannot be confirmed from read-only data is surfaced for
     a human rather than acted on.
@@ -210,8 +210,8 @@ This routine is strictly read-only: never call any qbo write or update tool. If 
     Each <code>qbo_invoices_list</code> record carries its full <code>Line[]</code>
     array, addresses and tax detail. Listing every invoice ever raised floods a single
     routine run with that detail and the run never reaches the report. So the routine
-    requests a bounded window — unpaid invoices from roughly the last 120 days, 50 rows
-    per page — which is wide enough to hold every open and overdue invoice while keeping
+    requests a bounded window of unpaid invoices from roughly the last 120 days, 50 rows
+    per page, which is wide enough to hold every open and overdue invoice while keeping
     the run small. Widening the window is a one-line change to the <code>startDate</code>
     in the routine prompt.
   </p>
@@ -219,14 +219,14 @@ This routine is strictly read-only: never call any qbo write or update tool. If 
   <p>
     The routine's QuickBooks connector is attached with a <code>permitted_tools</code>
     list containing only read tools. The <code>qbo_*_create</code> and
-    <code>qbo_*_update</code> tools are simply not reachable from inside the routine, so
-    there is no path — accidental or otherwise — by which a run could change WYRE's
-    books. The safety guarantee lives in the connector configuration, not in the prompt.
+    <code>qbo_*_update</code> tools are not reachable from inside the routine, so
+    there is no path by which a run could change WYRE's books. The safety guarantee
+    lives in the connector configuration, not in the prompt.
   </p>
   <h3>Delivery is a Slack canvas plus a summary</h3>
   <p>
     The full overdue-and-anomaly report can be long, so the routine publishes it as a
-    Slack canvas — a durable document teammates can scroll and reference — and posts only
+    Slack canvas, a durable document teammates can scroll and reference, and posts only
     a one-line summary to the channel linking it. The channel stays readable; the detail
     lives in the canvas. See <a href={`${baseUrl}advanced-workflows/delivery-adapters/`}>delivery adapters</a>
     for other ways to surface a routine's output.

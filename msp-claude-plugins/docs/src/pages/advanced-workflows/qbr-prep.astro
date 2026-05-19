@@ -74,9 +74,9 @@ Keep the prompt lean and factual. Do not invent data - if a tool returns nothing
     Review pack for one designated client by composing data from four systems — ticket
     history from Autotask, device health from Datto RMM, identity and MFA coverage from
     CIPP, and configuration changes from Liongard — writes the pack to an IT Glue
-    document, and posts a one-line summary to Slack. No servers, no code, no deployment —
-    the agent is a saved prompt plus a schedule plus two MCP connectors, running in
-    Claude's cloud.
+    document, and posts a one-line summary to Slack. There are no servers and no code to
+    deploy: the agent is a saved prompt plus a schedule plus two MCP connectors, running
+    in Claude's cloud.
   </p>
 
   <h2 id="what-it-builds">What it builds</h2>
@@ -84,7 +84,7 @@ Keep the prompt lean and factual. Do not invent data - if a tool returns nothing
     The finished workflow runs unattended on a weekly cron. Each run it reads the
     designated client's tickets, devices, users and configuration changes, reasons
     about what matters, assembles an executive summary plus a section per area, and
-    saves it as a QBR pack — turning four separate systems into a single review
+    saves it as a QBR pack, turning four separate systems into a single review
     document with a Slack trail.
   </p>
 
@@ -194,12 +194,12 @@ Keep the prompt lean and factual. Do not invent data - if a tool returns nothing
   <h2 id="how-it-works">How it works</h2>
   <h3>Four connectors composed into one pack</h3>
   <p>
-    The value of this workflow is composition: a QBR pack pulls from four systems that
-    normally need four separate logins. The routine calls each in turn — Autotask for
-    ticket volume, Datto RMM for device health, CIPP for identity and MFA coverage,
-    Liongard for configuration changes — and reasons over the combined picture to write
-    an executive summary plus a section per area. All five client IDs are baked into the
-    routine prompt, so the routine never spends a run on discovery.
+    A QBR pack pulls from four systems that normally need four separate logins. The
+    routine calls each in turn — Autotask for ticket volume, Datto RMM for device health,
+    CIPP for identity and MFA coverage, Liongard for configuration changes — and reasons
+    over the combined picture to write an executive summary plus a section per area. All
+    five client IDs are baked into the routine prompt, so the routine never spends a run
+    on discovery.
   </p>
   <h3>The IT Glue document is updated in place</h3>
   <p>

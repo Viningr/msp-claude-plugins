@@ -66,15 +66,15 @@ Use only these tools: liongard_detections_list, slack_create_canvas, slack_send_
     a Claude-managed scheduled agent that, once a week, pulls the last seven days of
     Liongard detections — the configuration-change events that <em>are</em> the
     compliance-drift signal — groups them by system, and publishes a digest to Slack as a
-    canvas with a one-line summary. No servers, no code, no deployment — the agent is a
-    saved prompt plus a schedule plus two MCP connectors, running in Claude's cloud.
+    canvas with a one-line summary. There are no servers and no code to deploy: the agent
+    is a saved prompt plus a schedule plus two MCP connectors, running in Claude's cloud.
   </p>
 
   <h2 id="what-it-builds">What it builds</h2>
   <p>
     The finished workflow runs unattended on a weekly cron. Each run it collects the
     week's Liongard detections, reads only the small per-detection metadata, groups the
-    findings by system, and notifies your team — turning a stream of scattered
+    findings by system, and notifies your team, turning a stream of scattered
     configuration changes into a single weekly drift digest with a Slack trail.
   </p>
 
@@ -186,7 +186,7 @@ Use only these tools: liongard_detections_list, slack_create_canvas, slack_send_
   </p>
   <h3>Detections are the drift signal</h3>
   <p>
-    A Liongard detection is a configuration-change event — a record that something on a
+    A Liongard detection is a configuration-change event, a record that something on a
     monitored system changed. The routine does not attempt a baseline pass/fail
     evaluation; instead it treats the week's detections themselves as the drift report.
     That keeps the routine built on a single, reliable endpoint
@@ -206,8 +206,8 @@ Use only these tools: liongard_detections_list, slack_create_canvas, slack_send_
   </p>
   <h3>Delivery is a Slack canvas plus a summary</h3>
   <p>
-    The grouped report can be long, so the routine publishes it as a Slack canvas — a
-    durable document teammates can scroll and reference — and posts only a one-line
+    The grouped report can be long, so the routine publishes it as a Slack canvas, a
+    durable document teammates can scroll and reference, and posts only a one-line
     summary to the channel linking it. When there are no detections at all, it posts a
     single line and skips the canvas. See <a href={`${baseUrl}advanced-workflows/delivery-adapters/`}>delivery adapters</a>
     for other ways to surface a routine's output.

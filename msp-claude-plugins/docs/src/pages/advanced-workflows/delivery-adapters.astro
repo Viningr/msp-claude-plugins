@@ -10,10 +10,10 @@ const baseUrl = import.meta.env.BASE_URL;
     Every <a href={`${baseUrl}advanced-workflows/`}>advanced workflow</a> routine has two
     separable halves. The <strong>workflow body</strong> collects data and reasons about it
     to produce a <strong>report</strong>. The <strong>delivery adapter</strong> takes that
-    report and writes it somewhere a human will see it — a Slack channel, a Slack canvas, an
-    IT Glue document. The two halves are joined by one thing: a <strong>report payload</strong>
-    — the finished report the body hands off. Swap the adapter and the same workflow delivers
-    to a different target without touching its logic.
+    report and writes it somewhere a human will see it, such as a Slack channel, a Slack
+    canvas, or an IT Glue document. The two halves are joined by a <strong>report
+    payload</strong>, the finished report the body hands off. Swap the adapter and the same
+    workflow delivers to a different target without touching its logic.
   </p>
 
   <h2 id="why-split">Why split body from delivery</h2>
@@ -22,7 +22,7 @@ const baseUrl = import.meta.env.BASE_URL;
     how it classifies, what it decides — never changes when you change where the report lands.
     A triage workflow that posts to Slack today can post to an IT Glue document tomorrow by
     swapping one section of the routine prompt and one connector. The body produces a report
-    payload; the adapter consumes it. That payload is the entire interface between them.
+    payload; the adapter consumes it. That payload is the interface between them.
   </p>
 
   <hr class="my-8" />
@@ -43,7 +43,7 @@ const baseUrl = import.meta.env.BASE_URL;
 
   <h2 id="shipped">Shipped adapters</h2>
   <p>
-    These three adapters are documented and proven. At a glance:
+    These adapters are documented and proven. At a glance:
   </p>
   <table>
     <thead>

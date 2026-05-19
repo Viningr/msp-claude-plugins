@@ -79,8 +79,8 @@ Tenants to audit (tenantFilter - name):
     a Claude-managed scheduled agent that, once a month, reads the Microsoft 365 license
     data for a fixed set of tenants through CIPP, flags every SKU with more seats
     purchased than assigned, estimates the wasted spend, and publishes a tenant-by-tenant
-    report to Slack as a canvas with a one-line summary. No servers, no code, no
-    deployment — the agent is a saved prompt plus a schedule plus two MCP connectors,
+    report to Slack as a canvas with a one-line summary. There are no servers and no code
+    to deploy: the agent is a saved prompt plus a schedule plus two MCP connectors,
     running in Claude's cloud.
   </p>
 
@@ -89,7 +89,7 @@ Tenants to audit (tenantFilter - name):
     The finished workflow runs unattended on a monthly cron. Each run it reads the
     license SKUs for each configured tenant, reasons about which ones have unassigned
     seats, estimates the monthly waste at a stated blended per-seat cost, groups the
-    findings by tenant with a portfolio total, and notifies your team — turning scattered
+    findings by tenant with a portfolio total, and notifies your team, turning scattered
     license sprawl into a single waste report with a Slack trail.
   </p>
 
@@ -215,11 +215,11 @@ Tenants to audit (tenantFilter - name):
   <h3>Waste is unassigned seats times a stated per-seat cost</h3>
   <p>
     For each SKU the routine compares <code>TotalLicenses</code> (purchased) against
-    <code>CountUsed</code> (assigned); the difference is unassigned seats — licenses paid
+    <code>CountUsed</code> (assigned); the difference is unassigned seats, licenses paid
     for but not in use. It multiplies the unassigned total by one blended per-seat cost
     (USD 20/month) to estimate monthly waste, and the report states that assumption
     plainly: "Estimate assumes a blended USD 20/seat/month; actual per-SKU pricing
-    varies." The routine deliberately does not invent exact per-SKU prices — the goal is
+    varies." The routine deliberately does not invent exact per-SKU prices; the goal is
     a directional waste signal that is consistent month to month, not a precise invoice.
   </p>
   <h3>It covers a fixed set of tenants, not the whole portfolio</h3>
@@ -235,13 +235,12 @@ Tenants to audit (tenantFilter - name):
   <p>
     If a tenant's license data cannot be read — a CIPP refresh error, a lapsed delegated
     admin relationship — the routine lists it in a "could not check" section rather than
-    omitting it. A tenant missing from the report always means a real gap, never a silent
-    skip.
+    omitting it. A tenant missing from the report always means a real gap.
   </p>
   <h3>Delivery is a Slack canvas plus a summary</h3>
   <p>
     The full tenant-by-tenant report can be long, so the routine publishes it as a Slack
-    canvas — a durable document teammates can scroll and reference — and posts only a
+    canvas, a durable document teammates can scroll and reference, and posts only a
     one-line summary to the channel with the portfolio total estimated waste, linking the
     canvas. The channel stays readable; the detail lives in the canvas. See
     <a href={`${baseUrl}advanced-workflows/delivery-adapters/`}>delivery adapters</a>
@@ -256,9 +255,9 @@ Tenants to audit (tenantFilter - name):
     a license assigned to a <em>disabled</em> user is waste that the purchased-vs-assigned
     comparison alone misses. Adding <code>cipp_list_users</code> to the routine lets it
     flag licenses held by disabled accounts as recoverable on top of the unassigned-seat
-    count. The workflow is also pricing-aware on request — swap the single blended rate
-    for a small per-SKU price map baked into the prompt to tighten the waste estimate;
-    the report-building and Slack-delivery body of the routine is identical.
+    count. The waste estimate can also be tightened: swap the single blended rate for a
+    small per-SKU price map baked into the prompt. The report-building and Slack-delivery
+    body of the routine is identical.
   </p>
   <p class="text-sm text-[var(--muted)]">
     Questions or a workflow you'd like documented?

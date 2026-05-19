@@ -65,15 +65,15 @@ Sites to check (siteUid - name):
     a Claude-managed scheduled agent that, once a week, lists the devices at a fixed set
     of Datto RMM sites, reads each device's patch status, flags everything that is not
     fully patched, and publishes a site-by-site report to Slack as a canvas with a
-    one-line summary. No servers, no code, no deployment — the agent is a saved prompt
-    plus a schedule plus two MCP connectors, running in Claude's cloud.
+    one-line summary. There are no servers and no code to deploy: the agent is a saved
+    prompt plus a schedule plus two MCP connectors, running in Claude's cloud.
   </p>
 
   <h2 id="what-it-builds">What it builds</h2>
   <p>
     The finished workflow runs unattended on a weekly cron. Each run it lists the
     devices at each of its configured sites, reasons about which are behind on
-    patching, groups the findings by site, and notifies your team — turning a
+    patching, groups the findings by site, and notifies your team, turning a
     scattered fleet into a single patch-drift report with a Slack trail.
   </p>
 
@@ -187,7 +187,7 @@ Sites to check (siteUid - name):
     <code>FullyPatched</code> — <code>InstallError</code>, <code>RebootRequired</code>,
     <code>NoPolicy</code>, <code>NoData</code> — or it has approved patches still pending
     install. Datto's device record gives no last-patched timestamp, so status is the
-    signal. That single rule is the entire classification logic, which keeps the report
+    signal. That single rule is the classification logic, which keeps the report
     consistent week to week and the routine prompt short.
   </p>
   <h3>It covers a fixed set of sites, not the whole fleet</h3>
@@ -203,7 +203,7 @@ Sites to check (siteUid - name):
   <h3>Delivery is a Slack canvas plus a summary</h3>
   <p>
     The full site-by-site report can be long, so the routine publishes it as a Slack
-    canvas — a durable document teammates can scroll and reference — and posts only a
+    canvas, a durable document teammates can scroll and reference, and posts only a
     one-line summary to the channel linking it. The channel stays readable; the detail
     lives in the canvas. See <a href={`${baseUrl}advanced-workflows/delivery-adapters/`}>delivery adapters</a>
     for other ways to surface a routine's output.
@@ -216,8 +216,8 @@ Sites to check (siteUid - name):
     The natural next step is whole-fleet coverage: once the gateway's
     <code>datto_list_devices</code> can return device records without the
     <code>udf</code> block, the routine can drop the baked-in site list and call
-    <code>datto_list_sites</code> to sweep everything. The workflow is also RMM-agnostic
-    — to run the same patch check against a NinjaOne fleet, swap the
+    <code>datto_list_sites</code> to sweep everything. The workflow is also RMM-agnostic.
+    To run the same patch check against a NinjaOne fleet, swap the
     <code>datto-rmm</code> tools for the gateway's <code>ninjaone</code> tools; the
     report-building and Slack-delivery body of the routine is identical.
   </p>

@@ -7,11 +7,10 @@ const baseUrl = import.meta.env.BASE_URL;
   <h1>Advanced Workflows</h1>
 
   <p class="lead text-lg text-[var(--muted)] mb-8">
-    The gateway's real power shows up when you stop calling tools one at a time and
-    start composing them. An <strong>advanced workflow</strong> is an agent that strings
-    several gateway tools together into a repeatable, often scheduled, end-to-end task —
-    triage a queue, reconcile billing, summarise alerts — with no servers to run and no
-    code to deploy.
+    An <strong>advanced workflow</strong> is an agent that strings several gateway tools
+    together into a repeatable, often scheduled, end-to-end task such as triaging a queue,
+    reconciling billing, or summarising alerts. There are no servers to run and no code to
+    deploy.
   </p>
 
   <h2 id="what-makes-a-workflow">What makes a workflow</h2>
@@ -21,7 +20,7 @@ const baseUrl = import.meta.env.BASE_URL;
   <ul>
     <li><strong>A trigger</strong> — usually a Claude-managed scheduled routine running on a cron, occasionally an on-demand run.</li>
     <li><strong>Gateway tools</strong> — the workflow reads and writes through MCP connectors; the gateway holds the credentials and does the vendor I/O.</li>
-    <li><strong>A prompt</strong> — the agent's logic lives entirely in a well-written prompt. That prompt <em>is</em> the workflow.</li>
+    <li><strong>A prompt</strong> — the agent's logic lives in a well-written prompt. That prompt <em>is</em> the workflow.</li>
     <li><strong>A notification</strong> — the result is surfaced to a human, typically in Slack or back onto the source record.</li>
   </ul>
   <p>
