@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `blackpoint`: +3 subagents (detection-investigator, alert-response-coordinator, exposure-analyst), +3 skills, +4 commands → 5 skills / 3 agents / 5 commands (v1.1.0)
   - `sherweb`: +3 subagents (subscription-provisioner, billing-reconciler, customer-account-auditor) → 4 skills / 3 agents / 4 commands (v0.3.0)
 
+### Changed
+
+- Docs: the **Compliance Drift Reporter** Advanced Workflow now also reports CIPP baseline drift (assigned Standards) and tenant delegated-access health, alongside the existing Liongard configuration-change detections
+
 ### Fixed
 
 - Gateway URL drift: flipped `blackpoint`, `crewhu`, `immybot`, `timezest`, `threatlocker` plugin READMEs and `.mcp.json` files from `mcp.wyretechnology.com` to canonical `mcp.wyre.ai` (closes #73)

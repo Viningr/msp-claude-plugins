@@ -67,7 +67,7 @@ const baseUrl = import.meta.env.BASE_URL;
       <tr><td>sla-uptime-reporter</td><td>betterstack</td><td>✅</td><td>betterstack</td><td>monthly</td><td>SLA achievement report; clean reporter.</td></tr>
       <tr><td>exposure-analyst</td><td>blackpoint</td><td>✅</td><td>blackpoint</td><td>weekly</td><td>Attack-surface / exposure rollup; reporter.</td></tr>
       <tr><td>compliance-reporter</td><td>blumira</td><td>✅</td><td>blumira</td><td>monthly</td><td>SIEM compliance evidence packages; reporter.</td></tr>
-      <tr><td>security-posture-reviewer</td><td>cipp</td><td>✅</td><td>cipp</td><td>monthly</td><td>M365 portfolio posture sweep; auditor.</td></tr>
+      <tr><td>security-posture-reviewer</td><td>cipp</td><td>✅</td><td>cipp</td><td>monthly</td><td>M365 portfolio posture sweep; auditor. CIPP posture is now partly covered by the Compliance Drift Reporter.</td></tr>
       <tr><td>automation-health-checker</td><td>connectwise-automate</td><td>✅</td><td>connectwise-automate</td><td>weekly</td><td>RMM environment health audit.</td></tr>
       <tr><td>project-tracker</td><td>connectwise-manage</td><td>✅</td><td>connectwise-manage</td><td>weekly</td><td>Open-project health review; reporter.</td></tr>
       <tr><td>tenant-policy-auditor</td><td>checkpoint-avanan</td><td>✅</td><td>checkpoint-avanan</td><td>monthly</td><td>Email-policy completeness audit.</td></tr>
@@ -85,7 +85,7 @@ const baseUrl = import.meta.env.BASE_URL;
       <tr><td>rmm-health-auditor</td><td>datto-rmm</td><td>✅</td><td>datto-rmm</td><td>daily</td><td>✅ built — batch 1 (Device Health Auditor).</td></tr>
       <tr><td>asset-documentation-linker</td><td>it-glue</td><td>✅</td><td>itglue</td><td>monthly</td><td>Finds broken IT Glue object linkages.</td></tr>
       <tr><td>documentation-auditor</td><td>it-glue</td><td>✅</td><td>itglue</td><td>monthly</td><td>IT Glue completeness/freshness audit.</td></tr>
-      <tr><td>compliance-drift-reporter</td><td>liongard</td><td>✅</td><td>liongard</td><td>weekly</td><td>✅ built — batch 1 (Compliance Drift Reporter).</td></tr>
+      <tr><td>compliance-drift-reporter</td><td>liongard</td><td>✅</td><td>liongard, cipp</td><td>weekly</td><td>✅ built — batch 1, expanded to CIPP baseline + posture drift.</td></tr>
       <tr><td>identity-auditor</td><td>m365</td><td>✅</td><td>m365</td><td>monthly</td><td>M365 tenant security audit; auditor.</td></tr>
       <tr><td>license-auditor</td><td>m365</td><td>✅</td><td>m365</td><td>monthly</td><td>✅ built — batch 1 (M365 License Auditor).</td></tr>
       <tr><td>email-continuity-checker</td><td>mimecast</td><td>✅</td><td>mimecast</td><td>daily</td><td>Continuity/archive health check.</td></tr>
